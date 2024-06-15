@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int            @id @default(autoincrement())
+  updatedAt DateTime       @updatedAt() @map("updated_at")
+  name      String
+  email     String         @unique
+  password  String
+  role      Role
+  photoUrl  String?
+  teamId    Int?
+  team      Team?          @relation(fields: [teamId], references: [id])
+  requests  MatchRequest[] @relation("Requests")
+  accepted  MatchRequest[] @relation("AcceptedBy")
+}
+
+model Team {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  name      String
+  photoUrl  String?
+  users     User[]
+}
+
+model MatchRequest {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now()) @map("created_at")
+  date        DateTime
+  location    String
+  status      String   @default("pending")
+  requesterId Int
+  accepterId  Int?
+  requester   User     @relation("Requests", fields: [requesterId], references: [id])
+  accepter    User?    @relation("AcceptedBy", fields: [accepterId], references: [id])
+}
+
+enum Role {
+  TRAINER
+  PLAYER
+}
