@@ -23,7 +23,6 @@ export class UserService {
         ...dto,
         password: await hash(dto.password),
         photoUrl: faker.image.avatar(),
-        role: Role.PLAYER,
       },
     });
   }

@@ -23,6 +23,7 @@ export class AuthService {
 
     if (oldUser) throw new BadRequestException('User already exists');
 
+    console.log(dto);
     const user = await this.userService.createUser(dto);
 
     const data = { id: user.id, role: user.role };
@@ -67,6 +68,7 @@ export class AuthService {
     return {
       id: user.id,
       email: user.email,
+      role: user.role,
     };
   }
 }
